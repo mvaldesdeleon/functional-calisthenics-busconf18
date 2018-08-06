@@ -43,9 +43,10 @@ instructions :: [Instruction]
 instructions = [F, F, F, L, F, F, F, R, R, B, B, R, B, F, F, F]
 
 processInstruction :: Instruction -> State WorldState ()
-processInstruction instruction = do
-    oldState <- get
-    put $ step oldState instruction
+processInstruction = modify . flip step
+-- processInstruction instruction = do
+--     oldState <- get
+--     put $ step oldState instruction
 
 evalInstructions :: [Instruction] -> WorldState -> WorldState
 evalInstructions instructions initialState = execState rover initialState
