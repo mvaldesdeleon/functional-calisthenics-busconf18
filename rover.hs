@@ -1,11 +1,12 @@
 data Instruction = F | B | L | R
+    deriving (Eq, Show)
 data Direction = N | S | E | W
-    deriving Eq
+    deriving (Eq, Show)
 data Position = Position Integer Integer
-    deriving Eq
+    deriving (Eq, Show)
 
 data WorldState = WorldState { roverPosition :: Position, roverDirection :: Direction, width :: Integer, height :: Integer, obstacles :: [Position]  }
-    deriving Eq
+    deriving (Eq, Show)
 
 step :: WorldState -> Instruction -> WorldState
 step (WorldState (Position roverX roverY) roverDirection width height obstacles) instruction = case instruction of
