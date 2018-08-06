@@ -1,3 +1,5 @@
+import Control.Monad.State
+
 data Instruction = F | B | L | R
     deriving (Eq, Show)
 data Direction = N | S | E | W
@@ -37,4 +39,10 @@ initialPosition = Position 10 10
 initialState :: WorldState
 initialState = WorldState initialPosition N 50 50 []
 
+instructions :: [Instruction]
+instructions = [F, F, F, L, F, F, F, R, R, B, B, R, B, F, F, F]
 
+processInstruction :: Instruction -> State WorldState ()
+processInstruction instruction = do
+    oldState <- get
+    put $ step oldState instruction
