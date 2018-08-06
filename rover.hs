@@ -45,7 +45,7 @@ goLeft :: WorldState -> WorldState
 goLeft worldState@WorldState { roverPosition = Position roverX roverY, width } = worldState { roverPosition = Position (retreat width roverX) roverY }
 
 step :: WorldState -> Instruction -> WorldState
-step worldState@(WorldState (Position roverX roverY) roverDirection _ _ _) instruction = case instruction of
+step worldState@WorldState { roverDirection } instruction = case instruction of
     F -> case roverDirection of
         N -> goUp worldState
         S -> goDown worldState
