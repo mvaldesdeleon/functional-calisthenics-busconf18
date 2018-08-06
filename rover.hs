@@ -31,7 +31,10 @@ step (WorldState (Position roverX roverY) roverDirection width height obstacles)
         E -> WorldState (Position roverX roverY) S width height obstacles
         W -> WorldState (Position roverX roverY) N width height obstacles
 
+initialPosition :: Position
 initialPosition = Position 10 10
+
+initialState :: WorldState
 initialState = WorldState initialPosition N 50 50 []
 
 finalPosition = Position 10 11
