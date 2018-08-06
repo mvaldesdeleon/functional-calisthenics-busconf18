@@ -54,3 +54,8 @@ evalInstructions instructions initialState = execState rover initialState
 finalState :: WorldState
 finalState = evalInstructions instructions initialState
 
+evalInstructions' :: [Instruction] -> WorldState -> WorldState
+evalInstructions' instructions initialState = foldl step initialState instructions
+
+finalState' :: WorldState
+finalState' = evalInstructions' instructions initialState
