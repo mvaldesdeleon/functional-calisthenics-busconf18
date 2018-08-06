@@ -46,3 +46,11 @@ processInstruction :: Instruction -> State WorldState ()
 processInstruction instruction = do
     oldState <- get
     put $ step oldState instruction
+
+evalInstructions :: [Instruction] -> WorldState -> WorldState
+evalInstructions instructions initialState = execState rover initialState
+    where rover = forM_ instructions processInstruction
+
+finalState :: WorldState
+finalState = evalInstructions instructions initialState
+
