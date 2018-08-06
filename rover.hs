@@ -37,11 +37,4 @@ initialPosition = Position 10 10
 initialState :: WorldState
 initialState = WorldState initialPosition N 50 50 []
 
-finalPosition = Position 10 11
-finalState = WorldState finalPosition N 50 50 []
 
-main :: IO ()
-main = let
-        test1 = (step initialState F) == finalState
-       in
-        if test1 == True then print "yay" else print "boo"
