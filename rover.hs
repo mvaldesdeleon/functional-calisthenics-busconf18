@@ -2,13 +2,21 @@ import Control.Monad.State
 
 data Instruction = F | B | L | R
     deriving (Eq, Show)
-data Direction = N | S | E | W
-    deriving (Eq, Show)
+data Direction = N | E | S | W
+    deriving (Eq, Show, Enum)
 data Position = Position Integer Integer
     deriving (Eq, Show)
 
 data WorldState = WorldState { roverPosition :: Position, roverDirection :: Direction, width :: Integer, height :: Integer, obstacles :: [Position]  }
     deriving (Eq, Show)
+
+turnRight :: Direction -> Direction
+turnRight W = N
+turnRight direction = succ direction
+
+turnLeft :: Direction -> Direction
+turnLeft N = W
+turnLeft direction = pred direction
 
 step :: WorldState -> Instruction -> WorldState
 step (WorldState (Position roverX roverY) roverDirection width height obstacles) instruction = case instruction of
@@ -22,16 +30,8 @@ step (WorldState (Position roverX roverY) roverDirection width height obstacles)
         S -> WorldState (Position roverX (roverY + 1)) roverDirection width height obstacles
         E -> WorldState (Position (roverX - 1) roverY) roverDirection width height obstacles
         W -> WorldState (Position (roverX + 1) roverY) roverDirection width height obstacles
-    L -> case roverDirection of
-        N -> WorldState (Position roverX roverY) W width height obstacles
-        S -> WorldState (Position roverX roverY) E width height obstacles
-        E -> WorldState (Position roverX roverY) N width height obstacles
-        W -> WorldState (Position roverX roverY) S width height obstacles
-    R -> case roverDirection of
-        N -> WorldState (Position roverX roverY) E width height obstacles
-        S -> WorldState (Position roverX roverY) W width height obstacles
-        E -> WorldState (Position roverX roverY) S width height obstacles
-        W -> WorldState (Position roverX roverY) N width height obstacles
+    L -> WorldState (Position roverX roverY) (turnLeft roverDirection) width height obstacles
+    R -> WorldState (Position roverX roverY) (turnRight roverDirection) width height obstacles
 
 initialPosition :: Position
 initialPosition = Position 10 10
