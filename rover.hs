@@ -1,3 +1,5 @@
+{-# LANGUAGE NamedFieldPuns #-}
+
 import Control.Monad.State
 
 data Instruction = F | B | L | R
@@ -10,28 +12,34 @@ data Position = Position Integer Integer
 data WorldState = WorldState { roverPosition :: Position, roverDirection :: Direction, width :: Integer, height :: Integer, obstacles :: [Position]  }
     deriving (Eq, Show)
 
-turnRight :: Direction -> Direction
-turnRight W = N
-turnRight direction = succ direction
+right :: Direction -> Direction
+right W = N
+right direction = succ direction
 
-turnLeft :: Direction -> Direction
-turnLeft N = W
-turnLeft direction = pred direction
+left :: Direction -> Direction
+left N = W
+left direction = pred direction
+
+turnRight :: WorldState -> WorldState
+turnRight worldState@WorldState { roverDirection } = worldState { roverDirection = right roverDirection }
+
+turnLeft :: WorldState -> WorldState
+turnLeft worldState@WorldState { roverDirection } = worldState { roverDirection = left roverDirection }
 
 step :: WorldState -> Instruction -> WorldState
-step (WorldState (Position roverX roverY) roverDirection width height obstacles) instruction = case instruction of
+step worldState@(WorldState (Position roverX roverY) roverDirection _ _ _) instruction = case instruction of
     F -> case roverDirection of
-        N -> WorldState (Position roverX (roverY + 1)) roverDirection width height obstacles
-        S -> WorldState (Position roverX (roverY - 1)) roverDirection width height obstacles
-        E -> WorldState (Position (roverX + 1) roverY) roverDirection width height obstacles
-        W -> WorldState (Position (roverX - 1) roverY) roverDirection width height obstacles
+        N -> worldState { roverPosition = (Position roverX (roverY + 1)) }
+        S -> worldState { roverPosition = (Position roverX (roverY - 1)) }
+        E -> worldState { roverPosition = (Position (roverX + 1) roverY) }
+        W -> worldState { roverPosition = (Position (roverX - 1) roverY) }
     B -> case roverDirection of
-        N -> WorldState (Position roverX (roverY - 1)) roverDirection width height obstacles
-        S -> WorldState (Position roverX (roverY + 1)) roverDirection width height obstacles
-        E -> WorldState (Position (roverX - 1) roverY) roverDirection width height obstacles
-        W -> WorldState (Position (roverX + 1) roverY) roverDirection width height obstacles
-    L -> WorldState (Position roverX roverY) (turnLeft roverDirection) width height obstacles
-    R -> WorldState (Position roverX roverY) (turnRight roverDirection) width height obstacles
+        N -> worldState { roverPosition = (Position roverX (roverY - 1)) }
+        S -> worldState { roverPosition = (Position roverX (roverY + 1)) }
+        E -> worldState { roverPosition = (Position (roverX - 1) roverY) }
+        W -> worldState { roverPosition = (Position (roverX + 1) roverY) }
+    L -> turnLeft worldState
+    R -> turnRight worldState
 
 initialPosition :: Position
 initialPosition = Position 10 10
