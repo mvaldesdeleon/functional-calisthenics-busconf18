@@ -9,7 +9,7 @@ data Direction = N | E | S | W
 data Position = Position Integer Integer
     deriving (Eq, Show)
 
-data WorldState = WorldState { roverPosition :: Position, roverDirection :: Direction, width :: Integer, height :: Integer, obstacles :: [Position]  }
+data WorldState = WorldState { roverPosition :: Position, roverDirection :: Direction, width :: Integer, height :: Integer, obstacles :: [Position] }
     deriving (Eq, Show)
 
 right :: Direction -> Direction
@@ -46,18 +46,21 @@ goLeft worldState@WorldState { roverPosition = Position roverX roverY, width } =
 
 step :: WorldState -> Instruction -> WorldState
 step worldState@WorldState { roverDirection } instruction = case instruction of
-    F -> case roverDirection of
+    F -> checkObstacles $ case roverDirection of
         N -> goUp worldState
         S -> goDown worldState
         E -> goRight worldState
         W -> goLeft worldState
-    B -> case roverDirection of
+    B -> checkObstacles $ case roverDirection of
         N -> goDown worldState
         S -> goUp worldState
         E -> goLeft worldState
         W -> goRight worldState
     L -> turnLeft worldState
     R -> turnRight worldState
+  where
+    -- After moving, check if the current position matches an obstacle position. If so, rollback to the original state.
+    checkObstacles newWorldState@WorldState { roverPosition, obstacles } = if elem roverPosition obstacles then worldState else newWorldState
 
 initialPosition :: Position
 initialPosition = Position 10 10
