@@ -71,14 +71,16 @@ initialState = WorldState initialPosition N 50 50 []
 instructions :: [Instruction]
 instructions = [F, F, F, L, F, F, F, R, R, B, B, R, B, F, F, F]
 
-processInstruction :: Instruction -> State WorldState ()
-processInstruction = modify . flip step
--- processInstruction instruction = do
---     oldState <- get
---     put $ step oldState instruction
+processInstruction :: Instruction -> State WorldState Bool
+processInstruction instruction = do
+    oldState <- get
+    let newState = step oldState instruction
+    put $ step oldState instruction
+    return $ if oldState == newState then False else True
 
 evalInstructions :: [Instruction] -> WorldState -> WorldState
 evalInstructions instructions initialState = execState rover initialState
+    -- We now need an enhanced version of forM that will break if the Bool is false
     where rover = forM_ instructions processInstruction
 
 finalState :: WorldState
