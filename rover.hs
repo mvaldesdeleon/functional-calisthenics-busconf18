@@ -1,6 +1,7 @@
 {-# LANGUAGE NamedFieldPuns #-}
 
 import Control.Monad.State
+import Control.Applicative
 
 data Instruction = F | B | L | R
     deriving (Eq, Show)
@@ -77,6 +78,18 @@ processInstruction instruction = do
     let newState = step oldState instruction
     put $ step oldState instruction
     return $ if oldState == newState then False else True
+
+untilS :: (b -> Bool) -> [a] -> (a -> State s b) -> State s (Maybe b)
+untilS _ [] _ = return Nothing
+untilS pr (a:as) f = state $ newState
+    where
+        newState s =
+            if (pr b) then (Just b, ns) else (mb <|> Just b, fs)
+            where
+                next = f a
+                (b, ns) = runState next s
+                tailState = untilS pr as f
+                (mb, fs) = runState tailState ns
 
 evalInstructions :: [Instruction] -> WorldState -> WorldState
 evalInstructions instructions initialState = execState rover initialState
